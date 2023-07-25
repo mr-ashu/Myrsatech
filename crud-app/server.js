@@ -13,8 +13,8 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '1@Lovely',
-  database:"employeedb"
-  
+  database: "employeedb"
+
 });
 
 db.connect((err) => {
@@ -25,17 +25,8 @@ db.connect((err) => {
 });
 
 // API endpoints
-app.get('/employee', (req, res) => {
-  const sql = 'SELECT * FROM Employee';
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.json(result);
-  });
-});
 
-app.get('/employee/:id', (req, res) => {
+app.get('/employee', (req, res) => {
   const searchQuery = req.query.q;
   let sql = 'SELECT * FROM Employee';
   const params = [];
@@ -51,6 +42,25 @@ app.get('/employee/:id', (req, res) => {
       throw err;
     }
     res.json(result);
+  });
+});
+
+app.get('/employee/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = 'SELECT * FROM Employee WHERE id = ?';
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    if (result.length === 0) {
+   
+      res.status(404).json({ error: 'Employee not found' });
+    } else {
+       
+      res.json(result[0]);
+    }
   });
 });
 
@@ -98,16 +108,7 @@ app.delete('/employee', (req, res) => {
   });
 });
 
-app.get('/employee/search', (req, res) => {
-  const name = req.query.Name;
-  const sql = 'SELECT * FROM Employee WHERE name LIKE ?';
-  db.query(sql, [`%${name}%`], (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.json(result);
-  });
-});
+ 
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

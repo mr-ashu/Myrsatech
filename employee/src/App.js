@@ -19,14 +19,15 @@ function App() {
 
   }
 
+  console.log(q);
 
-  const getData = () => {
+  const getData = ({q}={}) => {
     let url = "http://localhost:9000/employee";
-  
+
     if (q) {
       url += `?q=${encodeURIComponent(q)}`;
     }
-  
+    console.log(url);
     axios.get(url)
       .then((res) => {
         setData(res.data);
@@ -39,24 +40,27 @@ function App() {
 
 
   const addData = () => {
-    console.log(init);
+    
     axios.post(`http://localhost:9000/employee`, init)
       .then((res) => {
         getData()
+     
         alert("Sucessfully add!")
       })
+
+    
   }
 
 
 
   useEffect(() => {
-    getData(q)
-   
+    getData({q})
 
-  },[q])
 
-  
-  
+  }, [q])
+
+
+
 
 
   const deleteItem = (id) => {
@@ -76,136 +80,150 @@ function App() {
       })
   }
 
+const deleteAll=()=>{
+  axios.delete(`http://localhost:9000/employee`)
+  .then((res) => {
+    getData()
+    alert("Delete all sucess!");
+  })
+}
 
 
 
 
 
   return (
-    <div  >
-   
-      <nav class="navbar navbar-dark bg-primary p-3 mb-3 w=100">
-        <div class="container-fluid text-light">
+    <div>
 
-          Employee
 
+      <nav className="navbar navbar-expand-lg bg-primary p-2 text-light mb-4">
+        <div className="container-fluid">
+
+          <h5>Employee Board</h5>
+
+
+          <form >
+            <input  onChange={(e)=>setSearchQuery(e.target.value)} value={q} className="form-control me-2 mr-3" type="search" placeholder="Search by name or email" aria-label="Search" />
+           </form>
         </div>
+
       </nav>
-      <div class="container-fluid w-50 m-auto">
 
-        <form >
-          <div class="form-group">
-            <label for="exampleInputEmail1">Name</label>
-            <input name="Name" value={init.Name} onChange={handleChange} type="text" class="form-control" aria-describedby="emailHelp" />
 
+
+
+
+ 
+        <div className="container shadow-sm p-3  m-auto"   >
+
+          <div className="row g-3 mb-4">
+            <div className="col">
+              <label for="exampleInputEmail1">Name</label>
+              <input   name="Name" value={init.Name} onChange={handleChange} type="text" className="form-control" aria-describedby="emailHelp" placeholder="Name"/>
+
+            </div>
+            <div className="col">
+              <label for="exampleInputPassword1">Email</label>
+              <input name="Email" value={init.Email} onChange={handleChange} type="email" className="form-control" placeholder='Employee Email' />
+            </div>
+
+            <div className="col">
+              <label for="exampleInputPassword1">Role</label>
+              <input name="Designation" value={init.Designation} onChange={handleChange} type="text" className="form-control" placeholder='Employee Role' />
+            </div>
+            <div className="col">
+              <label for="exampleInputPassword1">Salary</label>
+              <input name="Salary" value={init.Salary} onChange={handleChange} type="number" className="form-control" placeholder='Employee Salary' />
+            </div>
+
+            
           </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Email</label>
-            <input name="Email" value={init.Email} onChange={handleChange} type="email" class="form-control" placeholder='Employee Email' />
-          </div>
 
-          <div class="form-group">
-            <label for="exampleInputPassword1">Role</label>
-            <input name="Designation" value={init.Designation} onChange={handleChange} type="text" class="form-control" placeholder='Employee Role' />
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Salary</label>
-            <input name="Salary" value={init.Salary} onChange={handleChange} type="number" class="form-control" placeholder='Employee Salary' />
-          </div>
-
-          <button onClick={addData} type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
-      </div>
+          <button onClick={addData} type="submit" className="btn btn-primary">Submit</button>
+          <button  onClick={deleteAll}   className="btn btn-danger ml-3">Delete All</button>
+        </div>
 
 
-<div  style={{width:"50%",margin:"auto",marginTop:"20px",marginBottom:"20px"}}>
-<input
-      
-        type="text"
-        placeholder="Search by Name or Email"
-        value={q}
-        onKeyDown={(e) => setSearchQuery(e.target.value)}
-      />
-</div>
-      
-
-      <table  class="table w-75  m-auto  ">
-
-   
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Sr.</th>
-            <th scope="col">Employee Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Role</th>
-            <th scope="col">Salary</th>
-            <th scope="col">Action</th>
-
-          </tr>
-        </thead>
-        <tbody>
-          {
-            data?.map((el, i) => (
-
-              <tr>
-                <th scope="row">{i + 1}</th>
-                <td>{el.Name}</td>
-                <td>{el.Email}</td>
-                <td>{el.Designation}</td>
-                <td>{el.Salary}</td>
-                <td><button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary">Edit</button> <button type="button ml-4" class="btn btn-danger" onClick={() => deleteItem(el.Id)}>Delete</button></td>
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Employee</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <form >
-                          <div class="form-group">
-                            <label for="exampleInputEmail1">Name</label>
-                            <input name="Name" value={init.Name} onChange={handleChange} type="text" class="form-control" aria-describedby="emailHelp" />
-
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputPassword1">Email</label>
-                            <input name="Email" value={init.Email} onChange={handleChange} type="email" class="form-control" placeholder='Employee Email' />
-                          </div>
-
-                          <div class="form-group">
-                            <label for="exampleInputPassword1">Role</label>
-                            <input name="Designation" value={init.Designation} onChange={handleChange} type="text" class="form-control" placeholder='Employee Role' />
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputPassword1">Salary</label>
-                            <input name="Salary" value={init.Salary} onChange={handleChange} type="number" class="form-control" placeholder='Employee Salary' />
-                          </div>
 
 
-                        </form>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button onClick={() => putItem(el.Id)} type="button" class="btn btn-primary">Save changes</button>
+
+        <table className="container  shadow-sm p-3 table w-75 mt-3">
+
+
+          <thead className="table-primary ">
+            <tr>
+              <th scope="col">Sr.</th>
+              <th scope="col">Employee Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col">Salary</th>
+              <th scope="col">Action</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {
+              data?.map((el, i) => (
+
+                <tr key={i}>
+                  <td scope="row ">{i + 1}</td>
+                  <td scope="row">{el.Name}</td>
+                  <td scope="row">{el.Email}</td>
+                  <td scope="row">{el.Designation}</td>
+                  <td scope="row">{el.Salary}</td>
+                  <td scope="row"><button type="button" data-toggle="modal" data-target={`#exampleModal${el.Id}`} className="btn btn-primary">Edit</button> <button type="button ml-4" className="btn btn-danger" onClick={() => deleteItem(el.Id)}>Delete</button></td>
+                  <div className="modal fade" id={`exampleModal${el.Id}`} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h5 className="modal-title" id={`exampleModal${el.Id}`}>Edit Employee</h5>
+                          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div className="modal-body">
+                          <form >
+                            <div className="form-group">
+                              <label for="exampleInputEmail1">Name</label>
+                              <input name="Name" value={init.Name} onChange={handleChange} type="text" className="form-control" aria-describedby="emailHelp" />
+
+                            </div>
+                            <div className="form-group">
+                              <label for="exampleInputPassword1">Email</label>
+                              <input name="Email" value={init.Email} onChange={handleChange} type="email" className="form-control" placeholder='Employee Email' />
+                            </div>
+
+                            <div className="form-group">
+                              <label for="exampleInputPassword1">Role</label>
+                              <input name="Designation" value={init.Designation} onChange={handleChange} type="text" className="form-control" placeholder='Employee Role' />
+                            </div>
+                            <div className="form-group">
+                              <label for="exampleInputPassword1">Salary</label>
+                              <input name="Salary" value={init.Salary} onChange={handleChange} type="number" className="form-control" placeholder='Employee Salary' />
+                            </div>
+
+
+                          </form>
+                        </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button onClick={() => putItem(el.Id)} type="button" className="btn btn-primary">Save changes</button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
 
-              </tr>
-            ))
-          }
+                </tr>
+              ))
+            }
 
 
 
 
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+     
 
 
 
